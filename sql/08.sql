@@ -18,3 +18,8 @@
  *    Ensure that you are not counting a customer that has rented a movie twice as 2 separate customers renting the movie.
  *    I did this by using the SELECT DISTINCT clause.
  */
+WITH hint_two AS (
+SELECT DISTINCT title, customer_id FROM film JOIN inventory USING (film_id) JOIN rental USING (inventory_id) WHERE title NOT LIKE 'BUCKET BROTHERHOOD' AND customer_id IN (
+SELECT DISTINCT customer_id FROM film JOIN inventory USING (film_id) JOIN rental USING (inventory_id) WHERE film_id = 103 GROUP BY customer_id) ORDER BY title) 
+
+SELECT title FROM (SELECT title FROM hint_two GROUP BY title HAVING count(title) >= 3) as eq ORDER BY title; 
